@@ -34,8 +34,8 @@ const DashboardView: React.FC<DashboardViewProps> = ({ user, prompts, onOpen, on
     <div className="flex-1 flex flex-col h-screen relative bg-background-light dark:bg-background-dark">
       <header className="pt-10 pb-4 px-6 flex justify-between items-center bg-white/80 dark:bg-background-dark/80 glass-panel sticky top-0 z-30">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-accent flex items-center justify-center text-white shadow-lg shadow-primary/20">
-            <span className="material-icons-round text-xl">terminal</span>
+          <div className="w-10 h-10 flex items-center justify-center">
+            <img src="/logo.png" alt="Logo" className="w-full h-full object-contain" />
           </div>
           <div>
             <h1 className="text-lg font-extrabold tracking-tight text-slate-900 dark:text-white leading-tight">PC Prompt</h1>
@@ -43,6 +43,13 @@ const DashboardView: React.FC<DashboardViewProps> = ({ user, prompts, onOpen, on
           </div>
         </div>
         <div className="flex items-center gap-3">
+          <button
+            onClick={onCreate}
+            className="w-10 h-10 rounded-xl bg-primary text-white flex items-center justify-center shadow-lg shadow-primary/20 hover:scale-105 active:scale-95 transition-all"
+            title="Novo Prompt"
+          >
+            <span className="material-icons-round">add</span>
+          </button>
           <button
             onClick={onLogout}
             className="p-2 rounded-xl text-slate-400 hover:text-red-500 hover:bg-red-500/10 transition-colors"
@@ -57,7 +64,7 @@ const DashboardView: React.FC<DashboardViewProps> = ({ user, prompts, onOpen, on
         </div>
       </header>
 
-      <main className="flex-1 px-6 pb-28 overflow-y-auto custom-scrollbar">
+      <main className="flex-1 px-6 pb-28 overflow-hidden flex flex-col">
         {/* Search & Filters */}
         <section className="mt-4 mb-6">
           <div className="relative group mb-4">
@@ -89,70 +96,72 @@ const DashboardView: React.FC<DashboardViewProps> = ({ user, prompts, onOpen, on
           </div>
         </section>
 
-        {/* Empty State */}
-        {filteredPrompts.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-20 text-center animate-slide-up">
-            <div className="w-20 h-20 bg-slate-100 dark:bg-slate-800 rounded-full flex items-center justify-center mb-4 text-slate-300">
-              <span className="material-icons-round text-4xl">inventory_2</span>
-            </div>
-            <h3 className="text-slate-600 dark:text-slate-400 font-semibold">Nenhum prompt encontrado</h3>
-            <p className="text-sm text-slate-400 mt-1 px-10 mb-6">Tente ajustar seus filtros ou crie um novo prompt.</p>
-            <button
-              onClick={onCreate}
-              className="px-6 py-3 bg-primary text-white font-bold rounded-2xl shadow-lg shadow-primary/30 flex items-center gap-2 hover:scale-105 transition-transform"
-            >
-              <span className="material-icons-round">add</span>
-              Criar meu primeiro prompt
-            </button>
-          </div>
-        ) : (
-          <div className="grid gap-4">
-            {filteredPrompts.map((prompt, idx) => (
-              <div
-                key={prompt.id}
-                onClick={() => onOpen(prompt)}
-                className="bg-white dark:bg-slate-800/40 p-5 rounded-2xl border border-slate-200 dark:border-slate-800/50 hover:border-primary/50 transition-all group cursor-pointer animate-slide-up relative overflow-hidden active:scale-[0.98]"
-                style={{ animationDelay: `${idx * 0.05}s` }}
-              >
-                <div className="absolute top-0 right-0 w-1 h-full bg-gradient-to-b from-primary to-accent opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                <div className="flex justify-between items-start mb-2">
-                  <span className="text-[10px] font-black text-primary uppercase tracking-tighter bg-primary/10 px-2 py-0.5 rounded">
-                    {prompt.category}
-                  </span>
-                  <span className="text-[10px] font-mono text-slate-400">
-                    {prompt.tokens} tokens
-                  </span>
-                </div>
-                <h3 className="text-base font-bold text-slate-900 dark:text-white group-hover:text-primary transition-colors line-clamp-1 mb-1">
-                  {prompt.title}
-                </h3>
-                <p className="text-xs text-slate-500 dark:text-slate-400 line-clamp-2 leading-relaxed">
-                  {prompt.content}
-                </p>
-                <div className="mt-4 flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <span className="material-icons-round text-[14px] text-slate-300">smart_toy</span>
-                    <span className="text-[10px] font-semibold text-slate-400">{prompt.model}</span>
-                  </div>
-                  <div className="flex gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <button
-                      onClick={(e) => { e.stopPropagation(); onToggleFavorite(prompt); }}
-                      className={`p-1.5 rounded-lg transition-colors ${prompt.isFavorite ? 'text-amber-500 bg-amber-500/10' : 'bg-slate-50 dark:bg-slate-700/50 text-slate-400 hover:text-amber-500'}`}
-                    >
-                      <span className="material-icons-round text-sm">{prompt.isFavorite ? 'star' : 'star_border'}</span>
-                    </button>
-                    <button
-                      onClick={(e) => { e.stopPropagation(); onEdit(prompt); }}
-                      className="p-1.5 rounded-lg bg-slate-50 dark:bg-slate-700/50 text-slate-400 hover:text-primary transition-colors"
-                    >
-                      <span className="material-icons-round text-sm">edit</span>
-                    </button>
-                  </div>
-                </div>
+        {/* List Area with fixed viewport for ~3 records */}
+        <div className="flex-1 overflow-y-auto custom-scrollbar max-h-[520px]">
+          {filteredPrompts.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-20 text-center animate-slide-up">
+              <div className="w-20 h-20 bg-slate-100 dark:bg-slate-800 rounded-full flex items-center justify-center mb-4 text-slate-300">
+                <span className="material-icons-round text-4xl">inventory_2</span>
               </div>
-            ))}
-          </div>
-        )}
+              <h3 className="text-slate-600 dark:text-slate-400 font-semibold">Nenhum prompt encontrado</h3>
+              <p className="text-sm text-slate-400 mt-1 px-10 mb-6">Tente ajustar seus filtros ou crie um novo prompt.</p>
+              <button
+                onClick={onCreate}
+                className="px-6 py-3 bg-primary text-white font-bold rounded-2xl shadow-lg shadow-primary/30 flex items-center gap-2 hover:scale-105 transition-transform"
+              >
+                <span className="material-icons-round">add</span>
+                Criar meu primeiro prompt
+              </button>
+            </div>
+          ) : (
+            <div className="grid gap-4 pb-4">
+              {filteredPrompts.map((prompt, idx) => (
+                <div
+                  key={prompt.id}
+                  onClick={() => onOpen(prompt)}
+                  className="bg-white dark:bg-slate-800/40 p-5 rounded-2xl border border-slate-200 dark:border-slate-800/50 hover:border-primary/50 transition-all group cursor-pointer animate-slide-up relative overflow-hidden active:scale-[0.98]"
+                  style={{ animationDelay: `${idx * 0.05}s` }}
+                >
+                  <div className="absolute top-0 right-0 w-1 h-full bg-gradient-to-b from-primary to-accent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                  <div className="flex justify-between items-start mb-2">
+                    <span className="text-[10px] font-black text-primary uppercase tracking-tighter bg-primary/10 px-2 py-0.5 rounded">
+                      {prompt.category}
+                    </span>
+                    <span className="text-[10px] font-mono text-slate-400">
+                      {prompt.tokens} tokens
+                    </span>
+                  </div>
+                  <h3 className="text-base font-bold text-slate-900 dark:text-white group-hover:text-primary transition-colors line-clamp-1 mb-1">
+                    {prompt.title}
+                  </h3>
+                  <p className="text-xs text-slate-500 dark:text-slate-400 line-clamp-2 leading-relaxed">
+                    {prompt.content}
+                  </p>
+                  <div className="mt-4 flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <span className="material-icons-round text-[14px] text-slate-300">smart_toy</span>
+                      <span className="text-[10px] font-semibold text-slate-400">{prompt.model}</span>
+                    </div>
+                    <div className="flex gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <button
+                        onClick={(e) => { e.stopPropagation(); onToggleFavorite(prompt); }}
+                        className={`p-1.5 rounded-lg transition-colors ${prompt.isFavorite ? 'text-amber-500 bg-amber-500/10' : 'bg-slate-50 dark:bg-slate-700/50 text-slate-400 hover:text-amber-500'}`}
+                      >
+                        <span className="material-icons-round text-sm">{prompt.isFavorite ? 'star' : 'star_border'}</span>
+                      </button>
+                      <button
+                        onClick={(e) => { e.stopPropagation(); onEdit(prompt); }}
+                        className="p-1.5 rounded-lg bg-slate-50 dark:bg-slate-700/50 text-slate-400 hover:text-primary transition-colors"
+                      >
+                        <span className="material-icons-round text-sm">edit</span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
       </main>
 
       <BottomNav currentView={View.DASHBOARD} onChange={onChangeView} onCreate={onCreate} />

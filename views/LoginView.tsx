@@ -68,8 +68,8 @@ const LoginView: React.FC<LoginViewProps> = ({ onLogin }) => {
       <div className="flex-1 flex flex-col justify-center max-w-sm mx-auto w-full">
         <div className="mb-12 text-center animate-slide-up">
           <div className="relative inline-block mb-6">
-            <div className="w-20 h-20 bg-gradient-to-br from-primary to-accent rounded-[2.5rem] flex items-center justify-center text-white shadow-2xl shadow-primary/40 rotate-12 transition-transform hover:rotate-0 duration-500">
-              <span className="material-icons-round text-4xl -rotate-12 hover:rotate-0 transition-transform duration-500">terminal</span>
+            <div className="w-24 h-24 flex items-center justify-center transition-transform hover:scale-105 duration-500">
+              <img src="/logo.png" alt="PC Prompt Logo" className="w-full h-full object-contain" />
             </div>
             <div className="absolute -top-2 -right-2 w-8 h-8 bg-white dark:bg-slate-800 rounded-full flex items-center justify-center shadow-lg">
               <span className="material-icons-round text-primary text-sm">bolt</span>

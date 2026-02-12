@@ -8,7 +8,7 @@ interface EditorViewProps {
   onSave: (prompt: Prompt) => void;
 }
 
-const CATEGORIES: Category[] = ['Administração', 'RH', 'Investigação', 'Inquérito', 'Boletim de Ocorrência'];
+const CATEGORIES: Category[] = ['Administração', 'RH', 'Investigação', 'Inquérito', 'Boletim de Ocorrência', 'Modelos'];
 const MODELS: Model[] = ['GPT', 'Claude', 'Gemini', 'Copilot', 'Perplexity', 'DeepSeek', 'Outros'];
 
 const EditorView: React.FC<EditorViewProps> = ({ prompt, onCancel, onSave }) => {
@@ -16,6 +16,7 @@ const EditorView: React.FC<EditorViewProps> = ({ prompt, onCancel, onSave }) => 
   const [content, setContent] = useState(prompt?.content || '');
   const [category, setCategory] = useState<Category>(prompt?.category || 'Administração');
   const [model, setModel] = useState<Model>(prompt?.model || 'GPT');
+  const [isPublic, setIsPublic] = useState(prompt?.isPublic ?? false);
 
   const handleSave = () => {
     if (!title || !content) {
@@ -30,7 +31,7 @@ const EditorView: React.FC<EditorViewProps> = ({ prompt, onCancel, onSave }) => 
       model,
       tokens: Math.floor(content.length / 4.5),
       createdAt: prompt?.createdAt || new Date().toISOString(),
-      isPublic: prompt?.isPublic ?? true
+      isPublic: isPublic
     });
   };
 
@@ -112,6 +113,25 @@ const EditorView: React.FC<EditorViewProps> = ({ prompt, onCancel, onSave }) => 
                   {mod}
                 </button>
               ))}
+            </div>
+          </div>
+
+          <div className="animate-slide-up" style={{ animationDelay: '0.4s' }}>
+            <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3 px-1">Privacidade & Visibilidade</label>
+            <div className="flex items-center gap-3 p-4 bg-white dark:bg-slate-800/40 border border-slate-200 dark:border-slate-800/50 rounded-2xl shadow-sm">
+              <div className={`w-12 h-12 rounded-xl flex items-center justify-center transition-colors ${isPublic ? 'bg-primary/10 text-primary' : 'bg-slate-100 dark:bg-slate-800 text-slate-500'}`}>
+                <span className="material-icons-round">{isPublic ? 'public' : 'lock'}</span>
+              </div>
+              <div className="flex-1">
+                <h4 className="text-sm font-bold text-slate-900 dark:text-white">Prompt Público</h4>
+                <p className="text-[10px] text-slate-500">Se ativado, outros usuários poderão visualizar este prompt na biblioteca.</p>
+              </div>
+              <button
+                onClick={() => setIsPublic(!isPublic)}
+                className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none ${isPublic ? 'bg-primary' : 'bg-slate-300 dark:bg-slate-700'}`}
+              >
+                <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${isPublic ? 'translate-x-6' : 'translate-x-1'}`} />
+              </button>
             </div>
           </div>
         </div>

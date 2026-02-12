@@ -11,7 +11,7 @@ interface LibraryViewProps {
 }
 
 const LibraryView: React.FC<LibraryViewProps> = ({ prompts, onOpen, onChangeView, onCreate }) => {
-    // Mock public prompts
+    // Filter public prompts to display in the library
     const publicPrompts = prompts.filter(p => p.isPublic);
 
     return (

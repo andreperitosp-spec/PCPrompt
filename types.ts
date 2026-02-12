@@ -9,7 +9,7 @@ export enum View {
   FAVORITES = 'FAVORITES'
 }
 
-export type Category = 'Administração' | 'RH' | 'Investigação' | 'Inquérito' | 'Boletim de Ocorrência';
+export type Category = 'Administração' | 'RH' | 'Investigação' | 'Inquérito' | 'Boletim de Ocorrência' | 'Modelos';
 
 export type Model = 'GPT' | 'Claude' | 'Gemini' | 'Copilot' | 'Perplexity' | 'DeepSeek' | 'Outros';
 
